@@ -1,0 +1,18 @@
+{
+    "contents" : "## Carregando os pacotes necessários\nlibrary(dplyr)\nlibrary(readr)\nlibrary(MonetDB.R)\n\n## Cria conexão para o dplyr\nmonetdb_conn <- src_monetdb(dbname = 'rais2014')\n\n## Cidades de interesse\ncidades <- c('Se-Aracaju', 'Pa-Belem', 'Mg-Belo Horizonte', 'Sc-Blumenau',\n             'Df-Brasilia', 'Sp-Campinas', 'Ms-Campo Grande', 'Rs-Caxias do Sul', \n             'Mt-Cuiaba', 'Pr-Curitiba', 'Sc-Florianopolis', 'Ce-Fortaleza',\n             'Go-Goiania', 'Pb-Joao Pessoa', 'Sc-Joinville', 'Pr-Londrina',\n             'Al-Maceio', 'Am-Manaus', 'Pr-Maringa', 'Rn-Natal', 'Rs-Porto Alegre',\n             'Pe-Recife', 'Sp-Ribeirao Preto', 'Rj-Rio de Janeiro',\n             'Ba-Salvador', 'Sp-Sao Jose dos Campos', 'Ma-Sao Luis', 'Sp-Sao Paulo',\n             'Sp-Sorocaba', 'Pi-Teresina', 'Mg-Uberlandia', 'Es-Vitoria')\n\n## Separando os códigos só das cidades de interesse\ncod_cidades <- read_delim('codigo_cidades.csv', delim = ':')\ncod_cidades <- subset(cod_cidades, subset = cod_cidades$municipio %in% cidades)\n\n## Criando uma conexão com a cidade\nestab <- tbl(monetdb_conn, from = 'rais_estb')\n\n## Consultando o número de estabelecimentos por município\nestabelecimentos <- estab %>%\n  select(município, ind_atividade_ano) %>%\n  filter(ind_atividade_ano == 1) %>%\n  filter(município %in% cod_cidades$codigo) %>%\n  group_by(município) %>%\n  summarise(total = n())\n\n## Salvando a consulta em um data.frame\nestabelecimentos <- collect(estabelecimentos)\ncidade <- collect(cidade)\ncolnames(estabelecimentos) <- c('codigo', 'total')\n\n## Juntando com os nomes das cidades\nestabelecimentos <- merge(estabelecimentos, cod_cidades, by = 'codigo')\nestabelecimentos <- subset(estabelecimentos, select = c('municipio', 'total'))\n",
+    "created" : 1445369036661.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3620528089",
+    "id" : "824C0CE2",
+    "lastKnownWriteTime" : 1445371532,
+    "path" : "/data/Endeavor/RAIS/estabelecimentos.R",
+    "project_path" : "estabelecimentos.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
