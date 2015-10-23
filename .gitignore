@@ -1,4 +1,5 @@
 .Rproj.user
 .Rhistory
 .RData
-*xlsx#
+.xlsx#
+.~lock.RAIS_vinculos_layout.xls#
